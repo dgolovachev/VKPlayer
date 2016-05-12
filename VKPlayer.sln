@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VKPlayer", "VKPlayer\VKPlayer.csproj", "{5FE759B7-F4D8-42BD-9D31-B44E77578C05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VK.WindowsPhone.SDK-XAML", "..\vk-windowsphone-sdk-master\vk-windowsphone-sdk-master\VK.WindowsPhone.SDK-XAML\VK.WindowsPhone.SDK-XAML.csproj", "{A7E0FC88-A513-4981-8C2A-0106045E695B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|ARM.Build.0 = Debug|ARM
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|ARM.Deploy.0 = Debug|ARM
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|x86.ActiveCfg = Debug|x86
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|x86.Build.0 = Debug|x86
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Debug|x86.Deploy.0 = Debug|x86
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|ARM.ActiveCfg = Release|ARM
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|ARM.Build.0 = Release|ARM
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|ARM.Deploy.0 = Release|ARM
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|x86.ActiveCfg = Release|x86
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|x86.Build.0 = Release|x86
+		{5FE759B7-F4D8-42BD-9D31-B44E77578C05}.Release|x86.Deploy.0 = Release|x86
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Debug|ARM.Build.0 = Debug|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Debug|x86.Build.0 = Debug|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|ARM.ActiveCfg = Release|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|ARM.Build.0 = Release|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|x86.ActiveCfg = Release|Any CPU
+		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

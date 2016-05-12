@@ -1,0 +1,9 @@
+# Build results
+VKPlayer/bin/*
+VKPlayer/obj/*
+.vs/*
+
+# User-specific files
+*.suo
+*.user
+
