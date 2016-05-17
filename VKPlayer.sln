@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VKPlayer", "VKPlayer\VKPlay
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VK.WindowsPhone.SDK-XAML", "..\vk-windowsphone-sdk-master\vk-windowsphone-sdk-master\VK.WindowsPhone.SDK-XAML\VK.WindowsPhone.SDK-XAML.csproj", "{A7E0FC88-A513-4981-8C2A-0106045E695B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VKPlayer(Windows)", "VKPlayer(Windows)\VKPlayer(Windows).csproj", "{19F836DB-C19A-4089-80CE-F2B900DF5480}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,18 @@ Global
 		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|ARM.Build.0 = Release|Any CPU
 		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|x86.ActiveCfg = Release|Any CPU
 		{A7E0FC88-A513-4981-8C2A-0106045E695B}.Release|x86.Build.0 = Release|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Debug|ARM.Build.0 = Debug|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Debug|x86.Build.0 = Debug|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Release|ARM.ActiveCfg = Release|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Release|ARM.Build.0 = Release|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Release|x86.ActiveCfg = Release|Any CPU
+		{19F836DB-C19A-4089-80CE-F2B900DF5480}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

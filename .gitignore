@@ -1,6 +1,10 @@
 # Build results
+VKPlayer.Windows/obj/
+VKPlayer.Windows/bin/
 VKPlayer/bin/*
 VKPlayer/obj/*
+VKPlayer(Windows)/obj/
+VKPlayer(Windows)/bin/
 .vs/*
 
 # User-specific files
