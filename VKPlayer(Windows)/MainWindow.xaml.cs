@@ -25,38 +25,43 @@ namespace VKPlayer_Windows_
         private bool _isRepeat = false;
         private bool _isRandom = false;
         private int _audioCount;
+
         public MainWindow()
         {
             InitializeComponent();
         }
+
         #region Window
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             new Authorization().Show();
-
-            Task task = new Task(GetUserAudio);
-            task.ContinueWith((AddAudioToAudioView));
-            task.Start();
+            GetUserAudioAsync();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
         }
+
         #endregion
 
         #region Media
+
         private void Player_MediaOpened(object sender, RoutedEventArgs e)
         {
             var audio = AudioView.SelectedItem as Audio;
             if (audio != null) FldNowPlay.Text = audio.artist + " - " + audio.title;
+            ProgressAudio.Value = 0;
+            ProgressAudio.Maximum = Player.NaturalDuration.TimeSpan.TotalSeconds;
             StartProgressUpdater();
         }
 
         private void Player_MediaEnded(object sender, RoutedEventArgs e)
         {
-            string url = null;
+            string url;
             _isPlaying = false;
+
             if (_isRepeat)
             {
                 url = GetUrl(_currentIndex);
@@ -69,6 +74,7 @@ namespace VKPlayer_Windows_
                 _currentIndex = new Random().Next(0, _audioCount);
                 url = GetUrl(_currentIndex);
             }
+
             else
             {
                 _currentIndex++;
@@ -79,21 +85,33 @@ namespace VKPlayer_Windows_
             PlayTrack(url);
         }
 
-        private void PlayTrack(string url)
-        {
-            Player.Source = new Uri(url);
-            Player.Play();
-            _isPlaying = true;
-        }
         #endregion
 
         #region Button
+
         private void AudioView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            _currentIndex = AudioView.SelectedIndex;
-            PlayTrack(GetUrl(_currentIndex));
-            PlayPauseImage();
+            PlayTrack(GetUrl(AudioView.SelectedIndex));
+            ChangePlayPauseImage();
+        }
 
+        private void ButUserAudio_Click(object sender, RoutedEventArgs e)
+        {
+            FldRequest.Text = string.Empty;
+            GetUserAudioAsync();
+        }
+
+        private void ButSearch_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(FldRequest.Text))
+            {
+                MessageBox.Show("Поле запроса пустое");
+                return;
+            }
+
+            Task searchTask = new Task(SearchAudio, FldRequest.Text);
+            searchTask.Start();
+            searchTask.ContinueWith(AddAudioToAudioView);
         }
 
         private void ButRepeat_Click(object sender, RoutedEventArgs e)
@@ -109,6 +127,7 @@ namespace VKPlayer_Windows_
                 _isRepeat = false;
                 uri = new Uri("pack://application:,,,/Resource/repeatOff.png");
             }
+
             BitmapImage bitmap = new BitmapImage(uri);
             ImageRepeat.Source = bitmap;
         }
@@ -119,7 +138,7 @@ namespace VKPlayer_Windows_
             {
                 Player.Pause();
                 _isPlaying = false;
-                PlayPauseImage();
+                ChangePlayPauseImage();
                 return;
             }
 
@@ -130,16 +149,16 @@ namespace VKPlayer_Windows_
                 return;
 
             }
+
             if (Player.Source == null && AudioView.SelectedIndex != -1)
             {
-                _currentIndex = AudioView.SelectedIndex;
-                Player.Source = new Uri(GetUrl(_currentIndex));
-
+                Player.Source = new Uri(GetUrl(AudioView.SelectedIndex));
             }
+
             Player.Play();
             _isPlaying = true;
 
-            PlayPauseImage();
+            ChangePlayPauseImage();
             StartProgressUpdater();
         }
 
@@ -154,6 +173,7 @@ namespace VKPlayer_Windows_
             {
                 index = ++AudioView.SelectedIndex;
             }
+
             PlayTrack(GetUrl(index));
         }
 
@@ -177,35 +197,42 @@ namespace VKPlayer_Windows_
 
         private void ButPrevious_Click(object sender, RoutedEventArgs e)
         {
-            _currentIndex = AudioView.SelectedIndex == 0 ? _audioCount : --AudioView.SelectedIndex;
-            PlayTrack(GetUrl(_currentIndex));
+            PlayTrack(GetUrl(AudioView.SelectedIndex == 0 ? _audioCount : --AudioView.SelectedIndex));
         }
 
-        private void ButSearch_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(FldRequest.Text))
-            {
-                return;
-            }
-            string request = FldRequest.Text;
-            Task searchTask = new Task(SearchAudio, request);
-            searchTask.Start();
-            searchTask.ContinueWith(AddAudioToAudioView);
-        }
         #endregion
 
         #region Вспомогательные методы
+
+        private void PlayTrack(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return;
+            }
+            Player.Source = new Uri(url);
+            Player.Play();
+            _isPlaying = true;
+        }
+
         private string GetUrl(int index)
         {
-            AudioView.SelectedIndex = _currentIndex = index = index > _audioCount ? 0 : index;
+            AudioView.SelectedIndex = _currentIndex = index > _audioCount ? 0 : index;
             var audio = AudioView.Items[_currentIndex] as Audio;
-            if (audio == null) GetUrl(index + 1);
-            return GetTrueUrl(audio.url);
+            return audio != null ? GetTrueUrl(audio.url) : null;
+
         }
 
         private string GetTrueUrl(string inputUrl)
         {
             return inputUrl.Substring(0, inputUrl.IndexOf('?'));
+        }
+
+        private void GetUserAudioAsync()
+        {
+            Task task = new Task(GetUserAudio);
+            task.ContinueWith((AddAudioToAudioView));
+            task.Start();
         }
 
         private void AddAudioToAudioView(Task obj)
@@ -220,7 +247,6 @@ namespace VKPlayer_Windows_
                     lock (_locker)
                     {
                         AudioView.Items.Add(item);
-
                     }
                 }
 
@@ -229,8 +255,7 @@ namespace VKPlayer_Windows_
 
         private void StartProgressUpdater()
         {
-            Thread thread = new Thread(ProgressUpdater);
-            thread.IsBackground = true;
+            Thread thread = new Thread(ProgressUpdater) { IsBackground = true };
             thread.Start();
         }
 
@@ -243,10 +268,10 @@ namespace VKPlayer_Windows_
             }
         }
 
-        private void PlayPauseImage()
+        private void ChangePlayPauseImage()
         {
-            Uri uri;
-            uri = _isPlaying ? new Uri("pack://application:,,,/Resource/pause.png") : new Uri("pack://application:,,,/Resource/play.png");
+            ButPlayPause.ToolTip = _isPlaying ? "Pause" : "Play";
+            var uri = _isPlaying ? new Uri("pack://application:,,,/Resource/pause.png") : new Uri("pack://application:,,,/Resource/play.png");
             BitmapImage bitmap = new BitmapImage(uri);
             ImagePlayPause.Source = bitmap;
         }
@@ -254,6 +279,7 @@ namespace VKPlayer_Windows_
         #endregion
 
         #region Vk API
+
         private void GetUserAudio()
         {
             while (!AppSettings.Default.auth)
@@ -289,10 +315,9 @@ namespace VKPlayer_Windows_
 
             JToken token = JToken.Parse(responseFromServer);
             _audioList = token["response"].Children().Skip(1).Select(c => c.ToObject<Audio>()).ToList();
-
         }
-        #endregion
 
+        #endregion
 
     }
 }
