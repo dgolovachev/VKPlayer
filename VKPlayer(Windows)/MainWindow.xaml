@@ -36,6 +36,7 @@
             Name="ButUserAudio" 
             Grid.Row="0"
             Grid.Column="0"
+            Background="Transparent"
             Margin="0,4"
             BorderThickness="0"
             ToolTip="Click Here To Return My Audio"
@@ -43,7 +44,7 @@
             <Image 
                 VerticalAlignment="Center"
                 Stretch="Uniform" 
-                Source="Resource/back.png"
+                Source="Resource/queue_music.png"
                 Height="20"/>
         </Button>
 
@@ -54,18 +55,22 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             Name="FldRequest"
+            ToolTip="Enter Artist or Name Track"
+            Keyboard.KeyUp="FldRequest_KeyUp"
             TextWrapping="NoWrap"/>
 
         <Button 
             Name="ButSearch" 
             Grid.Row="0"
             Grid.Column="2"
+            Background="Transparent"
             Margin="0,4"
             BorderThickness="0"
             ToolTip="Click Here To Search Audio"
             Click="ButSearch_Click">
             <Image 
                 Stretch="Uniform" 
+                VerticalAlignment="Center"
                 Source="Resource/search.png"
                 Height="20"/>
         </Button>
@@ -95,10 +100,10 @@
         </ListBox>
 
         <TextBlock 
-    Name="FldNowPlay"
-    Grid.Row="2"
-    Grid.Column="0"
-    Grid.ColumnSpan="3"
+            Name="FldNowPlay"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
             Margin="5,2"
             TextAlignment="Center"/>
 
@@ -128,6 +133,14 @@
             Margin="5,2"
             HorizontalAlignment="Center"
             Background="Transparent">
+
+            <Button 
+                Name="ButAddAudio"
+                ToolTip="Add To My Audio"
+                Click="ButAddAudio_Click"
+                Style="{StaticResource PlayerButton}">
+                <Image Source="Resource/add.png"  Height="20"/>
+            </Button>
 
             <Button 
                 Name="ButRepeat"
@@ -169,7 +182,23 @@
                 <Image Source="Resource/randomOff.png" Name="ImageRandom" Height="20"/>
             </Button>
 
-        </StackPanel>
+            <Button 
+                Name="ButDownload"
+                ToolTip="Download Selected Audio"
+                Click="ButDownload_Click"
+                Margin="0,2,0,0"
+                Style="{StaticResource PlayerButton}">
+                <Image Source="Resource/download.png"  Height="20"/>
+            </Button>
 
+        </StackPanel>
+        
+        <TextBlock
+            Name="FldDownloadProgress" 
+            Grid.Row="4"
+            Grid.Column="2"
+            Margin="0,5"
+            VerticalAlignment="Center"/>
+        
     </Grid>
 </Window>

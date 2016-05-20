@@ -10,6 +10,7 @@ using System.Web;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json.Linq;
 
 
@@ -101,6 +102,14 @@ namespace VKPlayer_Windows_
             GetUserAudioAsync();
         }
 
+        private void FldRequest_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ButSearch_Click(null, null);
+            }
+        }
+
         private void ButSearch_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(FldRequest.Text))
@@ -175,6 +184,42 @@ namespace VKPlayer_Windows_
             }
 
             PlayTrack(GetUrl(index));
+        }
+
+        private void ButAddAudio_Click(object sender, RoutedEventArgs e)
+        {
+            var taskAddAudio = new Task(AddAudio, AudioView.SelectedItem);
+            taskAddAudio.Start();
+            taskAddAudio.ContinueWith(MessageAudioAdded);
+        }
+
+        private async void ButDownload_Click(object sender, RoutedEventArgs e)
+        {
+            string fileName = null;
+            if (AudioView.SelectedIndex == -1)
+            {
+                MessageBox.Show("Не выбрана запись");
+                return;
+            }
+            var audio = AudioView.SelectedItem as Audio;
+            if (audio == null) return;
+            fileName = audio.artist + " - " + audio.title;
+            var dialog = new CommonOpenFileDialog { IsFolderPicker = true };
+            var result = dialog.ShowDialog();
+            if (result != CommonFileDialogResult.Ok) return;
+
+            var path = dialog.FileName;
+
+            using (var webClient = new WebClient())
+            {
+                webClient.DownloadProgressChanged += (o, args) => { FldDownloadProgress.Text = args.ProgressPercentage.ToString(); };
+                webClient.DownloadFileCompleted += (o, args) =>
+                {
+                    MessageBox.Show(string.Format("{0}.mp3 загружена", fileName));
+                    FldDownloadProgress.Text = string.Empty;
+                };
+                await webClient.DownloadFileTaskAsync(new Uri(GetTrueUrl(audio.url)), path + fileName + ".mp3");
+            }
         }
 
         private void ButRandom_Click(object sender, RoutedEventArgs e)
@@ -276,6 +321,11 @@ namespace VKPlayer_Windows_
             ImagePlayPause.Source = bitmap;
         }
 
+        private void MessageAudioAdded(Task obj)
+        {
+            MessageBox.Show("Запись добавлена");
+        }
+
         #endregion
 
         #region Vk API
@@ -317,7 +367,15 @@ namespace VKPlayer_Windows_
             _audioList = token["response"].Children().Skip(1).Select(c => c.ToObject<Audio>()).ToList();
         }
 
+        private void AddAudio(object audio)
+        {
+            var track = audio as Audio;
+            var request = WebRequest.Create("https://api.vk.com/method/audio.add?audio_id=" + track.aid + "&owner_id=" + track.owner_id + "&access_token=" + AppSettings.Default.token);
+            request.GetResponse();
+        }
+
         #endregion
+
 
     }
 }
