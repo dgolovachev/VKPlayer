@@ -92,6 +92,8 @@ namespace VKPlayer_Windows_
 
         private void AudioView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (AudioView.SelectedIndex == -1) return;
+
             PlayTrack(GetUrl(AudioView.SelectedIndex));
             ChangePlayPauseImage();
         }
@@ -114,11 +116,13 @@ namespace VKPlayer_Windows_
         {
             if (string.IsNullOrEmpty(FldRequest.Text))
             {
-                MessageBox.Show("Поле запроса пустое");
+                MessageBox.Show("Введите имя исполнителя или название аудиозаписи", "Уведомление", MessageBoxButton.OK,
+               MessageBoxImage.Information);
                 return;
             }
+            var request = ReplaceSpecificChar(FldRequest.Text);
 
-            Task searchTask = new Task(SearchAudio, FldRequest.Text);
+            var searchTask = new Task(SearchAudio, request);
             searchTask.Start();
             searchTask.ContinueWith(AddAudioToAudioView);
         }
@@ -137,7 +141,7 @@ namespace VKPlayer_Windows_
                 uri = new Uri("pack://application:,,,/Resource/repeatOff.png");
             }
 
-            BitmapImage bitmap = new BitmapImage(uri);
+            var bitmap = new BitmapImage(uri);
             ImageRepeat.Source = bitmap;
         }
 
@@ -153,8 +157,7 @@ namespace VKPlayer_Windows_
 
             if (Player.Source == null && AudioView.SelectedIndex == -1)
             {
-                MessageBox.Show("Не выбрана аудиозапись", "Уведомление", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                ShowMessageNotSelected();
                 return;
 
             }
@@ -188,22 +191,26 @@ namespace VKPlayer_Windows_
 
         private void ButAddAudio_Click(object sender, RoutedEventArgs e)
         {
+            if (AudioView.SelectedIndex == -1)
+            {
+                ShowMessageNotSelected();
+                return;
+            }
             var taskAddAudio = new Task(AddAudio, AudioView.SelectedItem);
             taskAddAudio.Start();
-            taskAddAudio.ContinueWith(MessageAudioAdded);
+            taskAddAudio.ContinueWith(task => MessageBox.Show("Запись добавлена"));
         }
 
         private async void ButDownload_Click(object sender, RoutedEventArgs e)
         {
-            string fileName = null;
             if (AudioView.SelectedIndex == -1)
             {
-                MessageBox.Show("Не выбрана запись");
+                ShowMessageNotSelected();
                 return;
             }
             var audio = AudioView.SelectedItem as Audio;
             if (audio == null) return;
-            fileName = audio.artist + " - " + audio.title;
+            var fileName = audio.artist + " - " + audio.title;
             var dialog = new CommonOpenFileDialog { IsFolderPicker = true };
             var result = dialog.ShowDialog();
             if (result != CommonFileDialogResult.Ok) return;
@@ -212,13 +219,27 @@ namespace VKPlayer_Windows_
 
             using (var webClient = new WebClient())
             {
-                webClient.DownloadProgressChanged += (o, args) => { FldDownloadProgress.Text = args.ProgressPercentage.ToString(); };
+                webClient.DownloadProgressChanged += (o, args) =>
+                {
+                    lock (_locker)
+                    {
+                        FldDownloadProgress.Text = args.ProgressPercentage.ToString();
+                    }
+                };
                 webClient.DownloadFileCompleted += (o, args) =>
                 {
                     MessageBox.Show(string.Format("{0}.mp3 загружена", fileName));
                     FldDownloadProgress.Text = string.Empty;
                 };
-                await webClient.DownloadFileTaskAsync(new Uri(GetTrueUrl(audio.url)), path + fileName + ".mp3");
+                try
+                {
+                    await webClient.DownloadFileTaskAsync(new Uri(GetTrueUrl(audio.url)), path + fileName + ".mp3");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show(string.Format("Файл c именем {0}.mp3 уже скачивается.", fileName), "Download error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
             }
         }
 
@@ -236,7 +257,7 @@ namespace VKPlayer_Windows_
                 uri = new Uri("pack://application:,,,/Resource/randomOff.png");
             }
 
-            BitmapImage bitmap = new BitmapImage(uri);
+            var bitmap = new BitmapImage(uri);
             ImageRandom.Source = bitmap;
         }
 
@@ -265,7 +286,6 @@ namespace VKPlayer_Windows_
             AudioView.SelectedIndex = _currentIndex = index > _audioCount ? 0 : index;
             var audio = AudioView.Items[_currentIndex] as Audio;
             return audio != null ? GetTrueUrl(audio.url) : null;
-
         }
 
         private string GetTrueUrl(string inputUrl)
@@ -275,7 +295,7 @@ namespace VKPlayer_Windows_
 
         private void GetUserAudioAsync()
         {
-            Task task = new Task(GetUserAudio);
+            var task = new Task(GetUserAudio);
             task.ContinueWith((AddAudioToAudioView));
             task.Start();
         }
@@ -300,7 +320,7 @@ namespace VKPlayer_Windows_
 
         private void StartProgressUpdater()
         {
-            Thread thread = new Thread(ProgressUpdater) { IsBackground = true };
+            var thread = new Thread(ProgressUpdater) { IsBackground = true };
             thread.Start();
         }
 
@@ -317,13 +337,19 @@ namespace VKPlayer_Windows_
         {
             ButPlayPause.ToolTip = _isPlaying ? "Pause" : "Play";
             var uri = _isPlaying ? new Uri("pack://application:,,,/Resource/pause.png") : new Uri("pack://application:,,,/Resource/play.png");
-            BitmapImage bitmap = new BitmapImage(uri);
+            var bitmap = new BitmapImage(uri);
             ImagePlayPause.Source = bitmap;
         }
 
-        private void MessageAudioAdded(Task obj)
+        private string ReplaceSpecificChar(string inputString)
         {
-            MessageBox.Show("Запись добавлена");
+            return inputString.Replace("#", "").Replace("*", "").Replace(":", "").Replace("\\", "").Replace("\"", "").Replace("/", "").Replace("?", "");
+        }
+
+        private void ShowMessageNotSelected()
+        {
+            MessageBox.Show("Не выбрана аудиозапись", "Уведомление", MessageBoxButton.OK,
+               MessageBoxImage.Information);
         }
 
         #endregion
@@ -342,28 +368,28 @@ namespace VKPlayer_Windows_
             var request = WebRequest.Create("https://api.vk.com/method/audio.get?owner_id=" + AppSettings.Default.id + "&need_user=0&access_token=" + AppSettings.Default.token);
             var response = request.GetResponse();
             var reader = new StreamReader(response.GetResponseStream());
-            string responseFromServer = reader.ReadToEnd();
+            var responseFromServer = reader.ReadToEnd();
             reader.Close();
             response.Close();
             responseFromServer = HttpUtility.HtmlDecode(responseFromServer);
 
-            JToken token = JToken.Parse(responseFromServer);
+            var token = JToken.Parse(responseFromServer);
             _audioList = token["response"].Children().Skip(1).Select(c => c.ToObject<Audio>()).ToList();
         }
 
         private void SearchAudio(object searchString)
         {
-            string search = (string)searchString;
+            var search = (string)searchString;
 
             var request = WebRequest.Create("https://api.vk.com/method/audio.search?q=" + search + "&auto_complete=1&count=50&access_token=" + AppSettings.Default.token);
             var response = request.GetResponse();
             var reader = new StreamReader(response.GetResponseStream());
-            string responseFromServer = reader.ReadToEnd();
+            var responseFromServer = reader.ReadToEnd();
             reader.Close();
             response.Close();
             responseFromServer = HttpUtility.HtmlDecode(responseFromServer);
 
-            JToken token = JToken.Parse(responseFromServer);
+            var token = JToken.Parse(responseFromServer);
             _audioList = token["response"].Children().Skip(1).Select(c => c.ToObject<Audio>()).ToList();
         }
 
@@ -374,8 +400,23 @@ namespace VKPlayer_Windows_
             request.GetResponse();
         }
 
+
         #endregion
 
+        private void ProgressAudio_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show(ProgressAudio.Value.ToString());
+            // _isPlaying = false;
+            // Player.Pause();
+            Player.Position = TimeSpan.FromSeconds(ProgressAudio.Value);
+            // Player.Play();
+            _isPlaying = true;
+            StartProgressUpdater();
+        }
 
+        private void ProgressAudio_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _isPlaying = false;
+        }
     }
 }

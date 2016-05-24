@@ -55,7 +55,7 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             Name="FldRequest"
-            ToolTip="Enter Artist or Name Track"
+            ToolTip="Enter Artist or Song"
             Keyboard.KeyUp="FldRequest_KeyUp"
             TextWrapping="NoWrap"/>
 
@@ -116,7 +116,7 @@
             MediaOpened="Player_MediaOpened"
             MediaEnded="Player_MediaEnded"
             Visibility="Hidden"/>
-
+        
         <ProgressBar 
             Name="ProgressAudio"
             Grid.Row="3"
@@ -124,6 +124,22 @@
             Grid.ColumnSpan="3"
             Margin="5,0"
             Foreground="#FF098CF6"/>
+
+        
+        <!--
+        <Slider
+                Name="ProgressAudio"   
+                Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Margin="5,0"
+                Background="#FF098CF6"
+                Style="{DynamicResource SimpleSlider}"
+                Value="{Binding ElementName=Player,Path=Position,Mode=TwoWay}"
+                VerticalAlignment="Center"
+                />
+-->
+        <!-- PreviewMouseLeftButtonUp="ProgressAudio_PreviewMouseLeftButtonUp" MouseEnter="ProgressAudio_MouseEnter" -->
 
         <StackPanel 
             Grid.Row="4"
@@ -136,7 +152,7 @@
 
             <Button 
                 Name="ButAddAudio"
-                ToolTip="Add To My Audio"
+                ToolTip="Add Selected Audio To My Audio"
                 Click="ButAddAudio_Click"
                 Style="{StaticResource PlayerButton}">
                 <Image Source="Resource/add.png"  Height="20"/>
@@ -192,13 +208,13 @@
             </Button>
 
         </StackPanel>
-        
+
         <TextBlock
             Name="FldDownloadProgress" 
             Grid.Row="4"
             Grid.Column="2"
             Margin="0,5"
             VerticalAlignment="Center"/>
-        
+
     </Grid>
 </Window>

@@ -13,9 +13,7 @@ namespace VKPlayer_Windows_
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             Browser.Navigate("https://oauth.vk.com/authorize?client_id=5420524&display=popup&redirect_uri=https://oauth.vk.com/blank.html&scope=audio&response_type=token&v=5.52&state");
-
         }
         private void Browser_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
@@ -31,10 +29,9 @@ namespace VKPlayer_Windows_
                     Close();
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-
-                MessageBox.Show(exception.Message);
+                MessageBox.Show("Authorization error\nPlease try later");
             }
 
         }
